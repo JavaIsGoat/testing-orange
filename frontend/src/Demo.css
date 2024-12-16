@@ -1,0 +1,94 @@
+.DemoContainer {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 2rem;
+  background-color: #f0f2f5;
+  /* height: 100vh; */
+  /* I quite like this 100vh height tho. Everything is on one screen then */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Screen {
+  display: none;
+  width: 80%;
+  max-width: 800px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ActiveScreen {
+  display: block;
+}
+
+.Title {
+  text-align: center;
+  color: #333;
+}
+
+.Description {
+  margin: 1rem;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.Buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.Button {
+  display: inline-block;
+  margin: 1rem;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.Button:hover {
+  background-color: #0056b3;
+}
+
+.Editor {
+  width: 100%;
+  height: 300px;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  margin-bottom: 20px;
+}
+
+.SubmittedContent {
+  white-space: pre-wrap;
+  background: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .Screen {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .Editor {
+    height: 200px;
+  }
+}
