@@ -34,30 +34,40 @@ export const useActivityTracker = ({ addLog }: ActivityTrackerOptions) => {
     };
 
     const handleCopy = (e: ClipboardEvent) => {
-      // e.clipboardData is initially empty, but we can set it to the
-      // data that we want copied onto the clipboard.
-      // e.clipboardData?.setData("text/plain", "Hello, world!");
-      // e.clipboardData?.setData("text/html", "<b>Hello, world!</b>");
+      const copiedText = window.getSelection()?.toString();
+      if (copiedText) {
+        addLog(`Copied text: ${copiedText}`, true, copiedText);
+      }
+    };
 
-      // This is necessary to prevent the current document selection from
-      // being written to the clipboard.
-      e.preventDefault();
-      const copiedText = e.clipboardData?.getData("text/plain");
-      e.clipboardData?.setData("text/html", "<b>Hello, world!</b>");
-
-      addLog(`Copied text: ${copiedText}`, true);
+    const handleCut = (e: ClipboardEvent) => {
+      const cutText = window.getSelection()?.toString();
+      if (cutText) {
+        addLog(`Cut text: ${cutText}`, true, cutText);
+      }
+    };
+    const handlePaste = async (e: ClipboardEvent) => {
+      // Get pasted content from clipboard event
+      const pastedText = e.clipboardData?.getData("text");
+      if (pastedText) {
+        addLog(`Pasted text: ${pastedText}`, true, pastedText);
+      }
     };
 
     window.addEventListener("blur", handleWindowBlur);
     window.addEventListener("focus", handleWindowFocus);
     document.addEventListener("visibilitychange", handleVisibilityChange);
     document.addEventListener("copy", handleCopy);
+    document.addEventListener("cut", handleCut);
+    document.addEventListener("paste", handlePaste);
 
     return () => {
       window.removeEventListener("blur", handleWindowBlur);
       window.removeEventListener("focus", handleWindowFocus);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("copy", handleCopy);
+      document.removeEventListener("cut", handleCut);
+      document.removeEventListener("paste", handlePaste);
     };
   }, [addLog]);
 };

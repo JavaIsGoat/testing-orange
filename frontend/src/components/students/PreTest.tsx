@@ -1,18 +1,34 @@
-import { Box, Button, Heading, TextField } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  TextArea,
+  TextField,
+} from "@radix-ui/themes";
 import { useActivityTracker, useStudent } from "../../hooks";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { log } from "console";
+import { ActivityLogContext } from "../../Demo";
+import NotRadixActivityLog from "../tracking/ActivityLog";
+import { LogEntry } from "../../types";
+import DummyQuestion from "./DummyQuestion";
 
 const StudentDashboard: React.FC = () => {
   const { student, setStudent } = useStudent();
   const [name, setName] = useState<string>("");
+  const [demoLog, setDemoLog] = useState<LogEntry[]>([]);
+
   useEffect(() => {
     setStudent({ id: "123", name: "Joe" });
   }, []);
 
-  const log = (message: string, sus: boolean, data?: string) => {
-    console.log(message);
+  const addLog = (message: string, sus: boolean = false) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setDemoLog((prev) => [...prev, { message, sus, timestamp }]);
   };
-  useActivityTracker({ addLog: log });
+
+  useActivityTracker({ addLog });
   if (!student?.name) {
     return (
       <Box style={{ textAlign: "center" }}>
@@ -58,6 +74,12 @@ const StudentDashboard: React.FC = () => {
   return (
     <Box style={{ textAlign: "center" }}>
       <p className="Text">Welcome back, {student.name}!</p>
+      <Flex style={{ justifyContent: "space-evenly" }}>
+        <DummyQuestion addLog={addLog} />
+
+        <NotRadixActivityLog activityLog={demoLog} />
+      </Flex>
+      <Button>Start Test</Button>
     </Box>
   );
 };
