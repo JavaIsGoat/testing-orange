@@ -1,11 +1,18 @@
-import { Box, Button, TextField } from "@radix-ui/themes";
-import { useStudent } from "../../hooks";
-import { useState } from "react";
+import { Box, Button, Heading, TextField } from "@radix-ui/themes";
+import { useActivityTracker, useStudent } from "../../hooks";
+import { useEffect, useState } from "react";
 
 const StudentDashboard: React.FC = () => {
   const { student, setStudent } = useStudent();
   const [name, setName] = useState<string>("");
+  useEffect(() => {
+    setStudent({ id: "123", name: "Joe" });
+  }, []);
 
+  const log = (message: string, sus: boolean, data?: string) => {
+    console.log(message);
+  };
+  useActivityTracker({ addLog: log });
   if (!student?.name) {
     return (
       <Box style={{ textAlign: "center" }}>
@@ -28,11 +35,30 @@ const StudentDashboard: React.FC = () => {
     );
   }
 
+  //Test name
+  //(subtitle) Basic test details: duration
+
+  // Integrity ((this will be a component))
+  // We can detect
+  // - tab and window switching
+  // - copy and paste events
+  // try it out!
+
+  // Example question (this will be a component)
+  // Question: Can you copy?
+  // Answer: Can you paste?
+
+  // Activity log (this will be a component)
+  // All sus events + editor in/out of focus too
+  // toggle for only sus events
+
+  // Start test button
+  // Figure out the fullscreen stuff from here
+
   return (
-    <div>
-      <h1 className="Heading1">Student Dashboard</h1>
+    <Box style={{ textAlign: "center" }}>
       <p className="Text">Welcome back, {student.name}!</p>
-    </div>
+    </Box>
   );
 };
 

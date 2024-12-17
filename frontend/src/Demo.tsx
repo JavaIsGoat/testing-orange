@@ -77,20 +77,20 @@ const Demo: React.FC = () => {
         addLog("Tab or window gained focus.", true);
       }
     };
-    // const handleWindowBlur = () => {
-    //   addLog("Window lost focus.", true);
-    // };
-    // const handleWindowFocus = () => {
-    //   addLog("Window gained focus.", true);
-    // };
+    const handleWindowBlur = () => {
+      addLog("Window lost focus.", true);
+    };
+    const handleWindowFocus = () => {
+      addLog("Window gained focus.", true);
+    };
 
-    // window.addEventListener("blur", handleWindowBlur);
-    // window.addEventListener("focus", handleWindowFocus);
+    window.addEventListener("blur", handleWindowBlur);
+    window.addEventListener("focus", handleWindowFocus);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      // window.removeEventListener("blur", handleWindowBlur);
-      // window.removeEventListener("focus", handleWindowFocus);
+      window.removeEventListener("blur", handleWindowBlur);
+      window.removeEventListener("focus", handleWindowFocus);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);

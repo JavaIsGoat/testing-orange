@@ -82,9 +82,9 @@ const StudentProvider: React.FC = () => {
                 </button>
               </div>
             )}
+            <hr></hr>
           </div>
         </nav>
-        <h1>Hello</h1>
         <main className="Container MainContent">
           <Outlet />
         </main>
