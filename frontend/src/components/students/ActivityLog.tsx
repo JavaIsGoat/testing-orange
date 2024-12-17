@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { LogEntry } from "../../types";
 import {
   Box,
   Button,
@@ -8,19 +7,21 @@ import {
   SegmentedControl,
   Strong,
 } from "@radix-ui/themes";
+import { LogEntry } from "../../types";
 
 interface ActivityLogProps {
   activityLog: LogEntry[];
 }
+
 const NotRadixActivityLog = ({ activityLog }: ActivityLogProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [onlySus, setOnlySus] = useState<boolean>(false);
+  const [showOnlySus, setShowOnlySus] = useState(false);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [activityLog]); // Scroll when activityLog changes
+  }, [activityLog]);
 
   return (
     <Flex
@@ -29,7 +30,10 @@ const NotRadixActivityLog = ({ activityLog }: ActivityLogProps) => {
       style={{ height: 300, width: 360, margin: "1rem" }}
     >
       <Strong>Activity Log</Strong>
-      <SegmentedControl.Root defaultValue="all">
+      <SegmentedControl.Root
+        value={showOnlySus ? "sus" : "all"}
+        onValueChange={(value) => setShowOnlySus(value === "sus")}
+      >
         <SegmentedControl.Item value="all">All</SegmentedControl.Item>
         <SegmentedControl.Item value="sus">Only Sus</SegmentedControl.Item>
       </SegmentedControl.Root>
@@ -50,18 +54,20 @@ const NotRadixActivityLog = ({ activityLog }: ActivityLogProps) => {
         // }}
       >
         <Box pr={"1rem"}>
-          {activityLog.map((entry, index) => (
-            <div
-              key={index}
-              style={{
-                textAlign: "left",
-                marginBottom: "5px",
-                ...(entry.sus && { color: "#BA6000" }),
-              }}
-            >
-              [{entry.timestamp}] {entry.message}
-            </div>
-          ))}
+          {activityLog
+            .filter((entry) => !showOnlySus || entry.sus)
+            .map((entry, index) => (
+              <div
+                key={index}
+                style={{
+                  textAlign: "left",
+                  marginBottom: "5px",
+                  ...(entry.sus && { color: "#BA6000" }),
+                }}
+              >
+                [{entry.timestamp}] {entry.message}
+              </div>
+            ))}
         </Box>
       </ScrollArea>
     </Flex>

@@ -4,7 +4,6 @@ import Start from "./components/Start";
 import Editor from "./components/Editor";
 import End from "./components/End";
 import { ScreenType, TestType, LogEntry } from "./types";
-import NotRadixActivityLog from "./components/tracking/ActivityLog";
 import Marking from "./components/Marking/Marking";
 
 interface IActivityLogContext {

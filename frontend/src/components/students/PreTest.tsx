@@ -10,9 +10,9 @@ import { useActivityTracker, useStudent } from "../../hooks";
 import { useContext, useEffect, useState } from "react";
 import { log } from "console";
 import { ActivityLogContext } from "../../Demo";
-import NotRadixActivityLog from "../tracking/ActivityLog";
 import { LogEntry } from "../../types";
 import DummyQuestion from "./DummyQuestion";
+import NotRadixActivityLog from "./ActivityLog";
 
 const StudentDashboard: React.FC = () => {
   const { student, setStudent } = useStudent();
@@ -54,19 +54,11 @@ const StudentDashboard: React.FC = () => {
   //Test name
   //(subtitle) Basic test details: duration
 
-  // Integrity ((this will be a component))
+  // Integrity notice.
   // We can detect
   // - tab and window switching
   // - copy and paste events
   // try it out!
-
-  // Example question (this will be a component)
-  // Question: Can you copy?
-  // Answer: Can you paste?
-
-  // Activity log (this will be a component)
-  // All sus events + editor in/out of focus too
-  // toggle for only sus events
 
   // Start test button
   // Figure out the fullscreen stuff from here
