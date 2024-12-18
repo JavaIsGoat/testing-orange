@@ -17,3 +17,9 @@ The money is when:
 Anti-cheating:
 
 - synthetic copy event: https://w3c.github.io/clipboard-apis/#clipboard-event-copy
+- mouse in/out COULD be useful: https://poe.com/preview/cQGKGogSGN6zKzvR23aH
+
+Think about:
+
+- students will copy and paste in text area -> i want them to do that. But this will show in Activity log
+- students might accidentally click Cmd D which is create bookmark,

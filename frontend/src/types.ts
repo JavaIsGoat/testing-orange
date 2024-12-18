@@ -55,3 +55,19 @@ The shop’s server uses the private key to decrypt the data. (1)
   },
   // Add more questions as needed
 ];
+
+export const requestFullScreen = () => {
+  const elem = document.documentElement;
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+    // } else if (elem.mozRequestFullScreen) {
+    //   /* Firefox */
+    //   elem.mozRequestFullScreen();
+    // } else if (elem.webkitRequestFullscreen) {
+    //   /* Chrome, Safari & Opera */
+    //   elem.webkitRequestFullscreen();
+    // } else if (elem.msRequestFullscreen) {
+    //   /* IE/Edge */
+    //   elem.msRequestFullscreen();
+  }
+};

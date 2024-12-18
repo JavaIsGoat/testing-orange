@@ -53,6 +53,12 @@ export const useActivityTracker = ({ addLog }: ActivityTrackerOptions) => {
         addLog(`Pasted text: ${pastedText}`, true, pastedText);
       }
     };
+    const handleFullscreenChange = () => {
+      const fullscreen = document.fullscreenElement !== null;
+      if (fullscreen) {
+        addLog(`Entered into fullscreen via button click`, false);
+      } else addLog(`Exited out of fullscreen`, true); //only logs when entered via my button click
+    };
 
     window.addEventListener("blur", handleWindowBlur);
     window.addEventListener("focus", handleWindowFocus);
@@ -60,6 +66,7 @@ export const useActivityTracker = ({ addLog }: ActivityTrackerOptions) => {
     document.addEventListener("copy", handleCopy);
     document.addEventListener("cut", handleCut);
     document.addEventListener("paste", handlePaste);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
 
     return () => {
       window.removeEventListener("blur", handleWindowBlur);
@@ -68,6 +75,7 @@ export const useActivityTracker = ({ addLog }: ActivityTrackerOptions) => {
       document.removeEventListener("copy", handleCopy);
       document.removeEventListener("cut", handleCut);
       document.removeEventListener("paste", handlePaste);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, [addLog]);
 };

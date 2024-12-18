@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Dialog,
   Flex,
   Heading,
   TextArea,
@@ -8,16 +9,17 @@ import {
 } from "@radix-ui/themes";
 import { useActivityTracker, useStudent } from "../../hooks";
 import { useContext, useEffect, useState } from "react";
-import { log } from "console";
-import { ActivityLogContext } from "../../Demo";
-import { LogEntry } from "../../types";
+import { LogEntry, requestFullScreen } from "../../types";
 import DummyQuestion from "./DummyQuestion";
 import NotRadixActivityLog from "./ActivityLog";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const StudentDashboard: React.FC = () => {
   const { student, setStudent } = useStudent();
   const [name, setName] = useState<string>("");
   const [demoLog, setDemoLog] = useState<LogEntry[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setStudent({ id: "123", name: "Joe" });
@@ -71,7 +73,51 @@ const StudentDashboard: React.FC = () => {
 
         <NotRadixActivityLog activityLog={demoLog} />
       </Flex>
-      <Button>Start Test</Button>
+      <Button
+        onClick={() => {
+          requestFullScreen();
+          navigate("/student/test");
+        }}
+      >
+        Start Test
+      </Button>
+      {/* <Dialog.Root>
+        {isFullscreen ? (
+          <Button
+            onClick={() => {
+              navigate("/student/test");
+            }}
+          >
+            Start Test
+          </Button>
+        ) : (
+          <Dialog.Trigger>
+            <Button>Start Test</Button>
+          </Dialog.Trigger>
+        )}
+        <Dialog.Content maxWidth="450px">
+          <Dialog.Title>Start Test</Dialog.Title>
+          <Dialog.Description size="2" mb="4">
+            You must be in fullscreen to take this test.
+          </Dialog.Description>
+          <Flex gap="3" mt="4" justify="end">
+            <Dialog.Close>
+              <Button variant="soft" color="gray">
+                Cancel
+              </Button>
+            </Dialog.Close>
+            <Dialog.Close>
+              <Button
+                onClick={() => {
+                  enterFullscreen();
+                }}
+              >
+                Go fullscreen
+              </Button>
+            </Dialog.Close>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root> */}
     </Box>
   );
 };
