@@ -3,8 +3,8 @@ import DummyQuestion from "./DummyQuestion";
 import { useState, useEffect } from "react";
 import { requestFullScreen } from "../../types";
 import BrianWongQ from "./questions/BrianWong";
+
 // This component should work in fullscreen only
-// Show Radix dialog when not in fullscreen to go to fullscreen
 // Enter fullscreen and exit fullscreen should be logged too
 
 // Light colourful bg with animations
@@ -40,7 +40,6 @@ const Test = () => {
   return (
     <Flex style={{ margin: "auto" }} direction="column" gap="2" width={"400px"}>
       <BrianWongQ addLog={() => {}} />
-      <Button>Let's go</Button>
     </Flex>
   );
 };
