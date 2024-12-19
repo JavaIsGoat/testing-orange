@@ -8,6 +8,7 @@ import {
   TextField,
   Badge,
   TextArea,
+  Spinner,
 } from "@radix-ui/themes";
 import BrianWongQ from "../students/questions/BrianWong";
 
@@ -18,7 +19,9 @@ export interface Question {
   markScheme: string[];
 }
 
-const questionData: any = {
+const questionData: Question = {
+  questionNumber: 1,
+  questionText: "",
   maximumMarks: 2,
   markScheme: [
     "[1] India and China are the two countries with politically tense relations",
@@ -33,22 +36,64 @@ export type Answer = {
   teacher_feedback?: string;
 };
 
+type AnswersResponse = {
+  [key: string]: Answer;
+};
+
 const Answers = () => {
-  const [selectedStudent, setSelectedStudent] = useState("123");
-  const [teacherFeedback, setTeacherFeedback] = useState(
-    responseData[selectedStudent].teacher_feedback
-  );
-  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedStudent, setSelectedStudent] = useState<string>("");
+  const [teacherFeedback, setTeacherFeedback] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [answersData, setAnswersData] = useState<AnswersResponse>({});
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    //axios hook
-    //http://localhost:7357/answers/list
-    //example response
-    //{
-    //   "123": { answer: "", mark_awarded: 1, ai_feedback: "", teacher_feedback: "" },
-    //   "456": { answer: "", mark_awarded: 1, ai_feedback: "", teacher_feedback: "" },
-    // };
+    (async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:7357/answers/list");
+        if (!response.ok) {
+          throw new Error("Failed to fetch answers");
+        }
+        const data: AnswersResponse = await response.json();
+        setAnswersData(data);
+        // Set the first student as selected when data loads
+        const firstStudentId = Object.keys(data)[0];
+        setSelectedStudent(firstStudentId);
+        setTeacherFeedback(data[firstStudentId]?.teacher_feedback || "");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
+
+  if (loading) {
+    return (
+      <Flex align="center" justify="center" style={{ height: "100vh" }}>
+        <Spinner size="1" />
+      </Flex>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box p="4">
+        <Text color="red" size="3">
+          {error}
+        </Text>
+      </Box>
+    );
+  }
+
+  if (!Object.keys(answersData).length) {
+    return (
+      <Box p="4">
+        <Text size="3">No answers available</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box p="4">
@@ -59,16 +104,21 @@ const Answers = () => {
         style={{ width: "100%", marginBottom: "20px" }}
       >
         <Flex gap="3" p="2">
-          {Object.keys(responseData).map((studentId) => (
+          {Object.keys(answersData).map((studentId) => (
             <Card
               key={studentId}
               style={{
                 cursor: "pointer",
                 minWidth: "100px",
                 backgroundColor:
-                  selectedStudent === studentId ? "var(--accent-3)" : "white",
+                  selectedStudent === studentId ? "orange" : "white",
               }}
-              onClick={() => setSelectedStudent(studentId)}
+              onClick={() => {
+                setSelectedStudent(studentId);
+                setTeacherFeedback(
+                  answersData[studentId].teacher_feedback || ""
+                );
+              }}
             >
               <Text size="2">Student {studentId}</Text>
             </Card>
@@ -84,7 +134,7 @@ const Answers = () => {
             <Text size="5" mb="4" weight="bold">
               Question & Answer
             </Text>
-            <BrianWongQ studentAnswer={responseData[selectedStudent].answer} />
+            <BrianWongQ studentAnswer={answersData[selectedStudent].answer} />
           </Card>
         </Box>
 
@@ -97,7 +147,7 @@ const Answers = () => {
                 Marks Awarded
               </Text>
               <Badge size="2" color="blue">
-                {responseData[selectedStudent].mark_awarded} /{" "}
+                {answersData[selectedStudent]?.mark_awarded} /{" "}
                 {questionData.maximumMarks}
               </Badge>
             </Card>
@@ -107,7 +157,7 @@ const Answers = () => {
               <Text size="3" weight="bold" mb="2">
                 Mark Scheme
               </Text>
-              {questionData.markScheme.map((scheme: any, index: any) => (
+              {questionData.markScheme.map((scheme, index) => (
                 <Text key={index} size="2" mb="2">
                   {scheme}
                 </Text>
@@ -119,7 +169,7 @@ const Answers = () => {
               <Text size="3" weight="bold" mb="2">
                 AI Feedback
               </Text>
-              <Text size="2">{responseData[selectedStudent].ai_feedback}</Text>
+              <Text size="2">{answersData[selectedStudent]?.ai_feedback}</Text>
             </Card>
 
             {/* Teacher Feedback */}
@@ -146,13 +196,8 @@ export default Answers;
 // Scroll view:
 // All students names (Q: does Bwong know student names lol?)
 
-// Left:
-// Question
-// Student Answer
-
 // Right:
 // givenMark/TotalMark
 // with arrows to configure and change
 // AI feedback
-// Provided mark scheme
 // Editable teacher comment box

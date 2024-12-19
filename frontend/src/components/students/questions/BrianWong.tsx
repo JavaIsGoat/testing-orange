@@ -13,7 +13,7 @@ const BrianWongQ = ({
   studentAnswer,
 }: BrianWongQProps) => {
   const [charCount, setCharCount] = useState(0);
-  const [answer, setAnswer] = useState<string>(studentAnswer ?? "");
+  const [inputAnswer, setAnswer] = useState<string>("");
   const MAX_CHARS = 600;
 
   const getColor = () => {
@@ -48,7 +48,7 @@ const BrianWongQ = ({
             setCharCount(e.target.value.length);
             setAnswer(e.target.value);
           }}
-          value={answer}
+          value={studentAnswer ?? inputAnswer}
         />
         <Text
           size="1"
@@ -68,7 +68,7 @@ const BrianWongQ = ({
         <Button
           disabled={charCount < 1 || charCount > MAX_CHARS}
           onClick={() => {
-            submitAnswer(answer);
+            submitAnswer(inputAnswer);
           }}
         >
           Submit

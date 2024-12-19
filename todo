@@ -1,10 +1,9 @@
 Demo
 
-- tracking component with activity log []
-- main screen (navigatable)
-- - start component
-- - test component
-- - - requires fullscreen mode [PENDING]
+- integrity box
+- AI marking
+- - good enough prompt and mark scheme
+- Nice colours
 
 ---
 
