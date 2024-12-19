@@ -1,5 +1,5 @@
 import { Box } from "@radix-ui/themes";
-import Question from "../students/questions/BrianWong";
+import BrianWongQ from "../students/questions/BrianWong";
 
 export interface Question {
   questionNumber: number;
@@ -44,7 +44,7 @@ const Answers = () => {
   return (
     <Box>
       Hello
-      <Question studentAnswer={responseData[123].answer} />
+      <BrianWongQ studentAnswer={responseData[123].answer} />
     </Box>
   );
 };
