@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import Groq from "groq-sdk";
 import bodyParser, { json } from "body-parser";
 import cors from "cors";
+import { answers, StatusCode } from "./types";
 
 dotenv.config();
 
@@ -72,6 +73,36 @@ async function callGroq(prompt: string, jsonPrompt: string) {
 
   return chatCompletion;
 }
+
+// post answers, store
+app.post(
+  "/answers/:sid",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { sid: studentId } = req.params;
+      const { answer } = req.body;
+      answers[studentId].answer = answer;
+      res.sendStatus(StatusCode.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// post - trigger AI marks for all students
+// post - teacher update marks and comments
+
+// get answers
+app.get(
+  "/answers/list",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.status(StatusCode.OK).json(answers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);

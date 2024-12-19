@@ -13,8 +13,9 @@ import { LogEntry, requestFullScreen } from "../../types";
 import DummyQuestion from "./DummyQuestion";
 import NotRadixActivityLog from "./ActivityLog";
 import { Navigate, useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
-const StudentDashboard: React.FC = () => {
+const PreTest: React.FC = () => {
   const { student, setStudent } = useStudent();
   const [name, setName] = useState<string>("");
   const [demoLog, setDemoLog] = useState<LogEntry[]>([]);
@@ -46,7 +47,7 @@ const StudentDashboard: React.FC = () => {
         </TextField.Root>
 
         <br></br>
-        <Button onClick={() => setStudent({ id: "123", name: name })}>
+        <Button onClick={() => setStudent({ id: uuidv4(), name: name })}>
           Confirm
         </Button>
       </Box>
@@ -122,4 +123,4 @@ const StudentDashboard: React.FC = () => {
   );
 };
 
-export default StudentDashboard;
+export default PreTest;

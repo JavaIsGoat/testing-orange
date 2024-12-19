@@ -3,6 +3,9 @@ import DummyQuestion from "./DummyQuestion";
 import { useState, useEffect } from "react";
 import { requestFullScreen } from "../../types";
 import BrianWongQ from "./questions/BrianWong";
+import { useStudent } from "../../hooks";
+import axios from "axios";
+import { stringify } from "querystring";
 
 // This component should work in fullscreen only
 // Enter fullscreen and exit fullscreen should be logged too
@@ -13,6 +16,7 @@ import BrianWongQ from "./questions/BrianWong";
 // Need to go to fortress to try other devices
 
 const Test = () => {
+  const { student, setStudent } = useStudent();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -27,7 +31,23 @@ const Test = () => {
     };
   }, []);
 
-  if (!isFullscreen) {
+  useEffect(() => {
+    setStudent({ id: "123", name: "Joe" });
+  }, []);
+
+  const submitAnswer = async (answer: string) => {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL!}/answers/${student?.id}`,
+      { answer },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  };
+
+  if (!isFullscreen && false) {
     return (
       <Flex align="center" justify="center" style={{ height: "100vh" }}>
         <Button onClick={requestFullScreen}>
@@ -39,7 +59,7 @@ const Test = () => {
 
   return (
     <Flex style={{ margin: "auto" }} direction="column" gap="2" width={"400px"}>
-      <BrianWongQ addLog={() => {}} />
+      <BrianWongQ addLog={() => {}} submitAnswer={submitAnswer} />
     </Flex>
   );
 };

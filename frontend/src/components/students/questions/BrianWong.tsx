@@ -2,11 +2,18 @@ import { Box, TextArea, Text, Button } from "@radix-ui/themes";
 import { useState } from "react";
 
 interface BrianWongQProps {
-  addLog: (message: string, sus: boolean, data?: string) => void;
+  addLog?: (message: string, sus: boolean, data?: string) => void;
+  submitAnswer?: (answer: string) => void;
+  studentAnswer?: string;
 }
 
-const BrianWongQ = ({ addLog }: BrianWongQProps) => {
+const BrianWongQ = ({
+  addLog,
+  submitAnswer,
+  studentAnswer,
+}: BrianWongQProps) => {
   const [charCount, setCharCount] = useState(0);
+  const [answer, setAnswer] = useState<string>(studentAnswer ?? "");
   const MAX_CHARS = 600;
 
   const getColor = () => {
@@ -26,6 +33,7 @@ const BrianWongQ = ({ addLog }: BrianWongQProps) => {
       <h2>What were the biggest geopolitical events in Asia in 2024?</h2>
       <div style={{ position: "relative" }}>
         <TextArea
+          disabled={studentAnswer !== undefined}
           autoSave="on"
           autoCorrect="on"
           style={{
@@ -34,9 +42,13 @@ const BrianWongQ = ({ addLog }: BrianWongQProps) => {
             paddingBottom: "25px", // Make room for the counter
           }}
           placeholder="Chaina Chaina Chaina..."
-          onFocus={() => addLog("Editor focused", false)}
-          onBlur={() => addLog("Editor lost focus", false)}
-          onChange={(e) => setCharCount(e.target.value.length)}
+          onFocus={() => addLog && addLog("Editor focused", false)}
+          onBlur={() => addLog && addLog("Editor lost focus", false)}
+          onChange={(e) => {
+            setCharCount(e.target.value.length);
+            setAnswer(e.target.value);
+          }}
+          value={answer}
         />
         <Text
           size="1"
@@ -52,7 +64,16 @@ const BrianWongQ = ({ addLog }: BrianWongQProps) => {
         </Text>
       </div>
       <br></br>
-      <Button disabled={charCount < 1 || charCount > MAX_CHARS}>Submit</Button>
+      {submitAnswer && (
+        <Button
+          disabled={charCount < 1 || charCount > MAX_CHARS}
+          onClick={() => {
+            submitAnswer(answer);
+          }}
+        >
+          Submit
+        </Button>
+      )}
     </Box>
   );
 };
