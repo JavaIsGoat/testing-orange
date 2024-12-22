@@ -105,7 +105,7 @@ const Answers = () => {
           ...prev,
           [selectedStudent]: {
             ...prev[selectedStudent],
-            mark_awarded: teacherMarks,
+            teacher_mark: teacherMarks,
             teacher_feedback: teacherFeedback,
           },
         }));
