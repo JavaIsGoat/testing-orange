@@ -29,15 +29,15 @@ export type Answer = {
 
 export let answers: Record<string, Answer> = {
   "123": {
-    answer: "12345",
-    mark_awarded: 1,
-    ai_feedback: "Could be better!",
+    answer: `In 2024, significant geopolitical events in Asia included:
+Taiwan's Presidential Election: Lai Ching-te was elected president, leading to a shift in legislative power and potential challenges in U.S.-Taiwan relations as he navigates a divided legislature2.
+North Korea's Military Escalation: North Korea terminated its military agreement with South Korea, increasing tensions and announcing plans to enhance its nuclear capabilities amid ongoing provocations36.
+Major Elections Across Asia: Countries like Indonesia and India held crucial elections, impacting regional politics and governance amid rising nationalism and economic challenges`,
     teacher_feedback: "",
   },
   "456": {
-    answer: "joemama",
-    mark_awarded: 2,
-    ai_feedback: "Awesome job",
+    answer: `In 2024, I think some big things happened in Asia, but I'm not really sure. Maybe there was an election in Taiwan? I heard something about that. Also, I think North Korea did something again—maybe they were being aggressive or something like that. And there might have been some other elections in countries like India or Indonesia, but honestly, I don't know what they were about. I guess people were just voting and stuff. Overall, it sounds like Asia was busy with politics, but I can't really say much more than that!
+`,
     teacher_feedback: "",
   },
 };

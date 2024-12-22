@@ -24,10 +24,21 @@ export interface Question {
 const questionData: Question = {
   questionNumber: 1,
   questionText: "",
-  maximumMarks: 2,
+  maximumMarks: 10,
   markScheme: [
-    "[1] India and China are the two countries with politically tense relations",
-    "[1] This is because of border disputes, which have escalated in recent times.",
+    "Identification of Key Events (4 marks)",
+    "1 mark for each correctly identified major geopolitical event.",
+    "Events could include:",
+    "- Major elections (e.g., Taiwan, Indonesia, India)",
+    "- Significant diplomatic developments (e.g., U.S.-China relations)",
+    "- Regional conflicts or tensions (e.g., North Korea's actions)",
+    "- Economic agreements or disruptions (e.g., ASEAN summits)",
+    "Analysis of Events (4 marks)",
+    "- 1 mark for each event analyzed in terms of its implications for regional stability, international relations, or economic impacts.",
+    "- Students should demonstrate understanding of how these events interact with global geopolitics.",
+    "Contextualization (2 marks)",
+    "- 1 mark for placing events within the broader geopolitical landscape of Asia.",
+    "- 1 mark for discussing the significance of these events in relation to global trends (e.g., multipolarity, rising nationalism).",
   ],
 };
 
@@ -45,19 +56,32 @@ type AnswersResponse = {
 
 const Answers = () => {
   const [selectedStudent, setSelectedStudent] = useState<string>("");
-  const [teacherFeedback, setTeacherFeedback] = useState<string>("");
+  const [teacherFeedback, setTeacherFeedback] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
   const [answersData, setAnswersData] = useState<AnswersResponse>({});
   const [error, setError] = useState<string>("");
   const [teacherMarks, setTeacherMarks] = useState<number>();
+  const [isMarking, setIsMarking] = useState(false);
 
+  const allStudentsMarked = useMemo(() => {
+    return Object.values(answersData).every(
+      (answer) => answer.mark_awarded !== undefined
+    );
+  }, [answersData]);
+
+  useEffect(() => {
+    //for debugging
+  });
   const hasChanges = useMemo(() => {
-    return answersData[selectedStudent]?.teacher_feedback !== teacherFeedback ||
+    const feedbackChanged =
+      answersData[selectedStudent]?.teacher_feedback !== teacherFeedback;
+    const markChanged =
       teacherMarks === undefined
-      ? false
-      : teacherMarks !==
+        ? false
+        : teacherMarks !==
           (answersData[selectedStudent]?.teacher_mark ??
             answersData[selectedStudent]?.mark_awarded);
+    return feedbackChanged || markChanged;
   }, [answersData, selectedStudent, teacherFeedback, teacherMarks]);
 
   useEffect(() => {
@@ -83,14 +107,8 @@ const Answers = () => {
 
   useEffect(() => {
     if (selectedStudent) {
-      console.log(
-        `Running this code ${answersData[selectedStudent]?.teacher_mark}`
-      );
       setTeacherFeedback(answersData[selectedStudent]?.teacher_feedback || "");
       setTeacherMarks(answersData[selectedStudent]?.teacher_mark);
-      console.log(
-        `Just set teacher marks to = ${answersData[selectedStudent]?.teacher_mark}`
-      );
     }
   }, [answersData, selectedStudent]);
 
@@ -119,6 +137,25 @@ const Answers = () => {
       }
     } catch (error) {
       console.error("Error updating answer:", error);
+    }
+  };
+
+  const handleMark = async () => {
+    try {
+      setIsMarking(true);
+      const response = await axios.post(
+        "http://localhost:7357/answers/generate-marks"
+      );
+
+      if (response.status === 200) {
+        // Refresh the answers data to get the new marks
+        console.log("Marking has began");
+      }
+    } catch (error) {
+      console.error("Error generating marks:", error);
+      setError("Failed to generate marks");
+    } finally {
+      // setIsMarking(false);
     }
   };
 
@@ -167,6 +204,15 @@ const Answers = () => {
         style={{ width: "100%", marginBottom: "20px" }}
       >
         <Flex gap="3" p="2">
+          <Card style={{ "--card-border-width": 0 } as React.CSSProperties}>
+            <Button
+              onClick={handleMark}
+              disabled={allStudentsMarked || isMarking}
+            >
+              {isMarking ? "Marking..." : "Mark"}
+            </Button>
+          </Card>
+
           {Object.keys(answersData).map((studentId) => (
             <Card
               key={studentId}
@@ -199,9 +245,7 @@ const Answers = () => {
         {/* Left Side - Question and Answer */}
         <Box style={{ flex: 1 }}>
           <Card>
-            <Text size="5" mb="4" weight="bold">
-              Question & Answer
-            </Text>
+            <Text size="5" mb="4" weight="bold"></Text>
             <BrianWongQ studentAnswer={answersData[selectedStudent].answer} />
           </Card>
         </Box>
@@ -256,9 +300,11 @@ const Answers = () => {
               <Text size="3" weight="bold" mb="2">
                 Mark Scheme
               </Text>
+              <br></br>
               {questionData.markScheme.map((scheme, index) => (
                 <Text key={index} size="2" mb="2">
                   {scheme}
+                  <br></br>
                 </Text>
               ))}
             </Card>
@@ -268,6 +314,7 @@ const Answers = () => {
               <Text size="3" weight="bold" mb="2">
                 AI Feedback
               </Text>
+              <br></br>
               <Text size="2">{answersData[selectedStudent]?.ai_feedback}</Text>
             </Card>
 
@@ -306,7 +353,4 @@ export default Answers;
 // All students names (Q: does Bwong know student names lol?)
 
 // Right:
-// givenMark/TotalMark
-// with arrows to configure and change
 // AI feedback
-// Editable teacher comment box
