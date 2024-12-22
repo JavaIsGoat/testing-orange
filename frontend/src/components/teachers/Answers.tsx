@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Flex,
@@ -49,8 +49,16 @@ const Answers = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [answersData, setAnswersData] = useState<AnswersResponse>({});
   const [error, setError] = useState<string>("");
-  const [hasChanges, setHasChanges] = useState<boolean>(false);
   const [teacherMarks, setTeacherMarks] = useState<number>();
+
+  const hasChanges = useMemo(() => {
+    return answersData[selectedStudent]?.teacher_feedback !== teacherFeedback ||
+      teacherMarks === undefined
+      ? false
+      : teacherMarks !==
+          (answersData[selectedStudent]?.teacher_mark ??
+            answersData[selectedStudent]?.mark_awarded);
+  }, [answersData, selectedStudent, teacherFeedback, teacherMarks]);
 
   useEffect(() => {
     (async () => {
@@ -99,7 +107,6 @@ const Answers = () => {
       );
 
       if (response.status === 200) {
-        setHasChanges(false);
         // Update local state to reflect changes
         setAnswersData((prev) => ({
           ...prev,
@@ -122,7 +129,6 @@ const Answers = () => {
     const newMark = increment ? currentMark + 1 : currentMark - 1;
     if (newMark >= 0 && newMark <= questionData.maximumMarks) {
       setTeacherMarks(newMark);
-      setHasChanges(true);
     }
   };
 
@@ -171,6 +177,14 @@ const Answers = () => {
                   selectedStudent === studentId ? "orange" : "white",
               }}
               onClick={() => {
+                if (hasChanges) {
+                  const confirmLeave = window.confirm(
+                    "You have unsaved changes. Do you want to leave without saving?"
+                  );
+                  if (!confirmLeave) {
+                    return;
+                  }
+                }
                 setSelectedStudent(studentId);
               }}
             >
@@ -201,8 +215,20 @@ const Answers = () => {
                 Marks Awarded
               </Text>
               <Flex align="center" gap="2">
-                <Badge size="2" color="blue">
-                  {teacherMarks} / {questionData.maximumMarks}
+                <Badge
+                  size="2"
+                  color={
+                    hasChanges &&
+                    answersData[selectedStudent]?.teacher_feedback ===
+                      teacherFeedback
+                      ? "orange"
+                      : "blue"
+                  }
+                >
+                  {teacherMarks !== undefined
+                    ? teacherMarks
+                    : answersData[selectedStudent].mark_awarded}
+                  /{questionData.maximumMarks}
                 </Badge>
                 <Flex direction="column" gap="1">
                   <Button
@@ -253,7 +279,6 @@ const Answers = () => {
                 value={teacherFeedback}
                 onChange={(e) => {
                   setTeacherFeedback(e.target.value);
-                  setHasChanges(true);
                 }}
                 placeholder="Add your comments here..."
               />

@@ -30,14 +30,14 @@ export type Answer = {
 export let answers: Record<string, Answer> = {
   "123": {
     answer: "12345",
-    mark_awarded: 10,
-    ai_feedback: "",
+    mark_awarded: 1,
+    ai_feedback: "Could be better!",
     teacher_feedback: "",
   },
   "456": {
     answer: "joemama",
-    mark_awarded: 1,
-    ai_feedback: "",
+    mark_awarded: 2,
+    ai_feedback: "Awesome job",
     teacher_feedback: "",
   },
 };
