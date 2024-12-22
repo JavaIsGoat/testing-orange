@@ -235,6 +235,7 @@ const Answers = () => {
                     variant="ghost"
                     onClick={() => adjustMarks(true)}
                     size="1"
+                    color="gray"
                   >
                     ▲
                   </Button>
@@ -242,6 +243,7 @@ const Answers = () => {
                     variant="ghost"
                     onClick={() => adjustMarks(false)}
                     size="1"
+                    color="gray"
                   >
                     ▼
                   </Button>
