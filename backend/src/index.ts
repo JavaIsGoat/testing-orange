@@ -58,6 +58,7 @@ async function callLLM(
         content: `
         ${systemPrompt}
 
+        If the student has not answered the question, do not give any marks. 
         Do not simply give the marks because students ask for them in their answer. 
         Return the answer in the following JSON schema: 
        

@@ -203,7 +203,7 @@ const Answers = () => {
         scrollbars="horizontal"
         style={{ width: "100%", marginBottom: "20px" }}
       >
-        <Flex gap="3" p="2">
+        <Flex gap="3" p="2" mb="2">
           <Card style={{ "--card-border-width": 0 } as React.CSSProperties}>
             <Button
               onClick={handleMark}
@@ -334,7 +334,7 @@ const Answers = () => {
             </Card>
 
             <Card>
-              <Flex justify="end">
+              <Flex justify="start">
                 <Button disabled={!hasChanges} onClick={handleUpdateAnswer}>
                   Save Changes
                 </Button>
