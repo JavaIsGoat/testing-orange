@@ -22,6 +22,7 @@ export interface Question {
 export type Answer = {
   answer: string;
   mark_awarded?: number;
+  teacher_mark?: number;
   ai_feedback?: string;
   teacher_feedback?: string;
 };

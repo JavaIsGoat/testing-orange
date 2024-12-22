@@ -9,7 +9,9 @@ import {
   Badge,
   TextArea,
   Spinner,
+  Button,
 } from "@radix-ui/themes";
+import axios from "axios";
 import BrianWongQ from "../students/questions/BrianWong";
 
 export interface Question {
@@ -34,6 +36,7 @@ export type Answer = {
   mark_awarded?: number;
   ai_feedback?: string;
   teacher_feedback?: string;
+  teacher_mark?: number;
 };
 
 type AnswersResponse = {
@@ -46,21 +49,22 @@ const Answers = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [answersData, setAnswersData] = useState<AnswersResponse>({});
   const [error, setError] = useState<string>("");
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
+  const [teacherMarks, setTeacherMarks] = useState<number>();
 
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:7357/answers/list");
-        if (!response.ok) {
+        const response = await axios.get("http://localhost:7357/answers/list");
+        if (!response.data) {
           throw new Error("Failed to fetch answers");
         }
-        const data: AnswersResponse = await response.json();
+        const data: AnswersResponse = response.data;
         setAnswersData(data);
         // Set the first student as selected when data loads
         const firstStudentId = Object.keys(data)[0];
         setSelectedStudent(firstStudentId);
-        setTeacherFeedback(data[firstStudentId]?.teacher_feedback || "");
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -68,6 +72,59 @@ const Answers = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (selectedStudent) {
+      console.log(
+        `Running this code ${answersData[selectedStudent]?.teacher_mark}`
+      );
+      setTeacherFeedback(answersData[selectedStudent]?.teacher_feedback || "");
+      setTeacherMarks(answersData[selectedStudent]?.teacher_mark);
+      console.log(
+        `Just set teacher marks to = ${answersData[selectedStudent]?.teacher_mark}`
+      );
+    }
+  }, [answersData, selectedStudent]);
+
+  const handleUpdateAnswer = async () => {
+    if (!selectedStudent) return;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:7357/answers/${selectedStudent}`,
+        {
+          teacher_mark: teacherMarks,
+          teacher_feedback: teacherFeedback,
+        }
+      );
+
+      if (response.status === 200) {
+        setHasChanges(false);
+        // Update local state to reflect changes
+        setAnswersData((prev) => ({
+          ...prev,
+          [selectedStudent]: {
+            ...prev[selectedStudent],
+            mark_awarded: teacherMarks,
+            teacher_feedback: teacherFeedback,
+          },
+        }));
+      }
+    } catch (error) {
+      console.error("Error updating answer:", error);
+    }
+  };
+
+  const adjustMarks = (increment: boolean) => {
+    const currentMark =
+      teacherMarks ?? answersData[selectedStudent]?.mark_awarded;
+    if (currentMark === undefined) return;
+    const newMark = increment ? currentMark + 1 : currentMark - 1;
+    if (newMark >= 0 && newMark <= questionData.maximumMarks) {
+      setTeacherMarks(newMark);
+      setHasChanges(true);
+    }
+  };
 
   if (loading) {
     return (
@@ -115,9 +172,6 @@ const Answers = () => {
               }}
               onClick={() => {
                 setSelectedStudent(studentId);
-                setTeacherFeedback(
-                  answersData[studentId].teacher_feedback || ""
-                );
               }}
             >
               <Text size="2">Student {studentId}</Text>
@@ -146,10 +200,27 @@ const Answers = () => {
               <Text size="3" weight="bold" mb="2">
                 Marks Awarded
               </Text>
-              <Badge size="2" color="blue">
-                {answersData[selectedStudent]?.mark_awarded} /{" "}
-                {questionData.maximumMarks}
-              </Badge>
+              <Flex align="center" gap="2">
+                <Badge size="2" color="blue">
+                  {teacherMarks} / {questionData.maximumMarks}
+                </Badge>
+                <Flex direction="column" gap="1">
+                  <Button
+                    variant="ghost"
+                    onClick={() => adjustMarks(true)}
+                    size="1"
+                  >
+                    ▲
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => adjustMarks(false)}
+                    size="1"
+                  >
+                    ▼
+                  </Button>
+                </Flex>
+              </Flex>
             </Card>
 
             {/* Mark Scheme */}
@@ -180,9 +251,20 @@ const Answers = () => {
               <TextArea
                 size="3"
                 value={teacherFeedback}
-                onChange={(e) => setTeacherFeedback(e.target.value)}
+                onChange={(e) => {
+                  setTeacherFeedback(e.target.value);
+                  setHasChanges(true);
+                }}
                 placeholder="Add your comments here..."
               />
+            </Card>
+
+            <Card>
+              <Flex justify="end">
+                <Button disabled={!hasChanges} onClick={handleUpdateAnswer}>
+                  Save Changes
+                </Button>
+              </Flex>
             </Card>
           </Flex>
         </Box>

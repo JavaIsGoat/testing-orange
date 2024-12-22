@@ -92,7 +92,22 @@ app.post(
 );
 
 // post - trigger AI marks for all students
-// post - teacher update marks and comments
+
+// put - teacher update marks and comments
+app.put(
+  "/answers/:sid",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { sid: studentId } = req.params;
+      const { teacher_mark, teacher_feedback } = req.body;
+      answers[studentId].teacher_mark = teacher_mark;
+      answers[studentId].teacher_feedback = teacher_feedback;
+      res.sendStatus(StatusCode.OK);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // get answers
 app.get(
